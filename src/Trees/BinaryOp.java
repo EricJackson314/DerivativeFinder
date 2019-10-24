@@ -50,24 +50,27 @@ class BinaryOp extends ExpressionTree {
 
     /** returns the derivative of this tree with respect to v. */
     public @Override ExpressionTree differentiate(Variable v) {
-        if (op == Operator.ADD)
-            return new BinaryOp(leftOp.differentiate(v), Operator.ADD, rightOp.differentiate(v));
 
-        if (op == Operator.SUBTRACT) return new BinaryOp(leftOp.differentiate(v), Operator.SUBTRACT,
+        ExpressionTree deriv= new BinaryOp(leftOp, op, rightOp);
+
+        if (op == Operator.ADD)
+            deriv= new BinaryOp(leftOp.differentiate(v), Operator.ADD, rightOp.differentiate(v));
+
+        if (op == Operator.SUBTRACT) deriv= new BinaryOp(leftOp.differentiate(v), Operator.SUBTRACT,
             rightOp.differentiate(v));
 
         if (op == Operator.MULTIPLY)
-            return new BinaryOp(new BinaryOp(leftOp, Operator.MULTIPLY, rightOp.differentiate(v)),
+            deriv= new BinaryOp(new BinaryOp(leftOp, Operator.MULTIPLY, rightOp.differentiate(v)),
                 Operator.ADD, new BinaryOp(leftOp.differentiate(v), Operator.MULTIPLY, rightOp));
 
         if (op == Operator.DIVIDE) return new BinaryOp(
-            new BinaryOp(new BinaryOp(leftOp.differentiate(v), Operator.MULTIPLY, rightOp),
+            deriv= new BinaryOp(new BinaryOp(leftOp.differentiate(v), Operator.MULTIPLY, rightOp),
                 Operator.SUBTRACT,
                 new BinaryOp(leftOp, Operator.MULTIPLY, rightOp.differentiate(v))),
             Operator.DIVIDE, new BinaryOp(rightOp, Operator.EXPONENTIATE, new DoubleLeaf(2)));
 
         if (op == Operator.EXPONENTIATE)
-            return new BinaryOp(new BinaryOp(leftOp, Operator.EXPONENTIATE, rightOp),
+            deriv= new BinaryOp(new BinaryOp(leftOp, Operator.EXPONENTIATE, rightOp),
                 Operator.MULTIPLY,
                 new BinaryOp(
                     new BinaryOp(new BinaryOp(rightOp, Operator.DIVIDE, leftOp), Operator.MULTIPLY,
@@ -75,7 +78,76 @@ class BinaryOp extends ExpressionTree {
                     Operator.ADD, new BinaryOp(new UniaryOp(UniaryOp.Operator.LOG, leftOp),
                         Operator.MULTIPLY, rightOp.differentiate(v))));
 
-        throw new RuntimeException("Invalid Operator: " + op.toString());
+        return deriv.simplify();
+    }
+
+    /** Returns a simplified version of this tree */
+    public @Override ExpressionTree simplify() {
+
+        // simplify the left and right side of the expression first.
+        ExpressionTree lop= leftOp.simplify(); // left
+        ExpressionTree rop= rightOp.simplify(); // right
+
+        // lop and rop are both double leaves.
+        if (lop.getClass() == DoubleLeaf.class && rop.getClass() == DoubleLeaf.class)
+            return new DoubleLeaf(eval());
+
+        // for reference. we will compare trees to these.
+        ExpressionTree zero= new DoubleLeaf(0);
+        ExpressionTree one= new DoubleLeaf(1);
+
+        if (rop.equals(zero)) {
+            // x + 0 = x
+            // x - 0 = x
+            if (op == Operator.ADD || op == Operator.SUBTRACT) return lop;
+
+            // x * 0 = 0
+            if (op == Operator.MULTIPLY) return zero;
+
+            // x^0 = 1
+            if (op == Operator.EXPONENTIATE) return one;
+        }
+
+        if (lop.equals(zero)) {
+            // 0 + x = x
+            if (op == Operator.ADD) return rop;
+
+            // 0 - x = -x
+            if (op == Operator.SUBTRACT) return new UniaryOp(UniaryOp.Operator.NEGATIVE, rop);
+
+            // 0 * x = 0
+            // 0 / x = 0
+            if (op == Operator.MULTIPLY || op == Operator.DIVIDE) return zero;
+
+            // 0 ^ x = 0
+            if (op == Operator.EXPONENTIATE) return zero;
+
+        }
+
+        // x + -y = x - y
+        // -x + y = y - x
+
+        if (lop.equals(one)) {
+            // 1 * x = x
+            if (op == Operator.EXPONENTIATE) return rop;
+
+            // 1 / x = x^-1
+            // IS THIS ACTUALLY SIMPLER???
+            if (op == Operator.DIVIDE)
+                return new BinaryOp(rop, Operator.EXPONENTIATE, new DoubleLeaf(-1));
+        }
+
+        if (rop.equals(one)) {
+            // x * 1 = x
+            // x / 1 = x
+            // x^1 = x
+            if (op == Operator.MULTIPLY || op == Operator.DIVIDE || op == Operator.EXPONENTIATE)
+                return lop;
+
+        }
+
+        // no simplifying needed!
+        return new BinaryOp(lop, op, rop);
     }
 
     /** returns true iff <br>

@@ -17,4 +17,6 @@ public abstract class ExpressionTree {
     /** Returns the derivative of this tree with respect to variable v. */
     abstract ExpressionTree differentiate(Variable v);
 
+    /** Returns a simplified version of this tree */
+    abstract ExpressionTree simplify();
 }

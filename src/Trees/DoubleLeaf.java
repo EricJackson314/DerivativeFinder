@@ -25,6 +25,11 @@ class DoubleLeaf extends ExpressionTree {
         return new DoubleLeaf(0);
     }
 
+    /** Returns a simplified version of this tree */
+    public @Override ExpressionTree simplify() {
+        return new DoubleLeaf(value);
+    }
+
     /** Returns true iff <br>
      * 1. ob is a DoubleLeaf <br>
      * 2. ob and this have the same value */

@@ -63,8 +63,11 @@ class UniaryOp extends ExpressionTree {
         throw new RuntimeException("Invalid Operator: " + op.toString());
     }
 
-    /** Returns the in-order version of this expression. */
+    /** Returns the in-order version of this expression, parenthesized if it contains an
+     * expression. */
     public @Override String inOrder() {
+        if (rightOp.getClass() == UniaryOp.class || rightOp.getClass() == BinaryOp.class)
+            return op.toString() + "(" + rightOp.toString() + ")";
         return op.toString() + rightOp.toString();
     }
 
@@ -72,7 +75,7 @@ class UniaryOp extends ExpressionTree {
     public @Override ExpressionTree differentiate(Variable v) {
         // negative
         if (op == Operator.NEGATIVE)
-            return new UniaryOp(Operator.NEGATIVE, rightOp.differentiate(v));
+            return new UniaryOp(Operator.NEGATIVE, rightOp.differentiate(v).simplify());
         // abs
         if (op == Operator.ABS) throw new RuntimeException(
             "Invalid Derivative: Cannot compute derivative of absolute value.");
@@ -155,7 +158,77 @@ class UniaryOp extends ExpressionTree {
         if (op == Operator.EXP) noChain= new UniaryOp(Operator.EXP, rightOp);
 
         // never forget the chain rule
-        return new BinaryOp(noChain, BinaryOp.Operator.MULTIPLY, rightOp.differentiate(v));
+        return new BinaryOp(noChain, BinaryOp.Operator.MULTIPLY, rightOp.differentiate(v))
+            .simplify();
+    }
+
+    /** Returns a simplified version of this tree */
+    public @Override ExpressionTree simplify() {
+
+        // simplify the inner expression first.
+        ExpressionTree rop= rightOp.simplify();
+
+        // rop is a double leaf
+        if (rop.getClass() == DoubleLeaf.class) return new DoubleLeaf(eval());
+
+        if (rop.getClass() == UniaryOp.class) {
+            UniaryOp urop= (UniaryOp) rop;
+
+            if (urop.op == Operator.NEGATIVE) {
+                // -(-x) = x
+                if (op == Operator.NEGATIVE) return urop.rightOp;
+
+                // abs(-x) = abs(x)
+                if (op == Operator.ABS) return new UniaryOp(Operator.ABS, urop.rightOp);
+
+            }
+
+            // sin(arcsin(x)) = x
+            if (op == Operator.SIN && urop.op == Operator.ARCSIN) return urop.rightOp;
+
+            // cos(arccos(x)) = x
+            if (op == Operator.COS && urop.op == Operator.ARCCOS) return urop.rightOp;
+
+            // tan(arctan(x)) = x
+            if (op == Operator.TAN && urop.op == Operator.ARCTAN) return urop.rightOp;
+
+            // csc(arccsc(x)) = x
+            if (op == Operator.CSC && urop.op == Operator.ARCCSC) return urop.rightOp;
+
+            // sec(arcsec(x)) = x
+            if (op == Operator.SEC && urop.op == Operator.ARCSEC) return urop.rightOp;
+
+            // cot(arccot(x)) = x
+            if (op == Operator.COT && urop.op == Operator.ARCCOT) return urop.rightOp;
+
+            // arcsin(sin(x)) = x
+            if (op == Operator.ARCSIN && urop.op == Operator.SIN) return urop.rightOp;
+
+            // arccos(cos(x)) = x
+            if (op == Operator.ARCCOS && urop.op == Operator.COS) return urop.rightOp;
+
+            // arctan(tan(x)) = x
+            if (op == Operator.ARCTAN && urop.op == Operator.TAN) return urop.rightOp;
+
+            // arccsc(csc(x)) = x
+            if (op == Operator.ARCCSC && urop.op == Operator.CSC) return urop.rightOp;
+
+            // arcsec(sec(x)) = x
+            if (op == Operator.ARCSEC && urop.op == Operator.SEC) return urop.rightOp;
+
+            // arccot(cot(x)) = x
+            if (op == Operator.ARCCOT && urop.op == Operator.COT) return urop.rightOp;
+
+            // exp(log(x)) = x
+            if (op == Operator.EXP && urop.op == Operator.LOG) return urop.rightOp;
+
+            // log(exp(x)) = x
+            if (op == Operator.LOG && urop.op == Operator.EXP) return urop.rightOp;
+
+        }
+
+        // no simplifying needed!
+        return new UniaryOp(op, rop);
     }
 
     /** Returns true iff <br>
