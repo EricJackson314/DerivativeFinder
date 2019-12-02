@@ -37,4 +37,11 @@ public class Variable {
         return getSymbol();
     }
 
+    /** returns true if the two variables have the same symbol */
+    public @Override boolean equals(Object ob) {
+        if (ob == null || ob.getClass() != getClass()) return false;
+        Variable vob= (Variable) ob;
+        return symbol.equals(vob.symbol);
+    }
+
 }
