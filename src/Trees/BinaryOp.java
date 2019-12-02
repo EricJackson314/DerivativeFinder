@@ -1,15 +1,18 @@
 package Trees;
 
-/** Represents an instance with operators: + - * / ^ */
+/** Represents a binary operation */
 public class BinaryOp extends Expression {
-    Expression leftOp;
-    Expression riteOp;
+    Expression leftOp; // left Operand
+    Expression riteOp; // right Operand
 
-    String op;
+    String op; // Operator
 
-    BinaryEvaluation e;
-    BinaryDerivative d;
+    BinaryEvaluation e; // Evaluation
+    BinaryDerivative d; // Derivative
 
+    /** Constructor: <br>
+     * Creates a Binary Expression with left Operand lOp, right Operand rOp, Operator o, Evaluation
+     * ev, and Derivative d. */
     public BinaryOp(Expression lOp, Expression rOp, String o, BinaryEvaluation ev,
         BinaryDerivative dr) {
         leftOp= lOp;
@@ -41,6 +44,7 @@ public class BinaryOp extends Expression {
 
 }
 
+/** Addition */
 class Add extends BinaryOp {
     public Add(Expression lOp, Expression rOp) {
         super(lOp, rOp,
@@ -50,6 +54,7 @@ class Add extends BinaryOp {
     }
 }
 
+/** Subtraction */
 class Sub extends BinaryOp {
     public Sub(Expression lOp, Expression rOp) {
         super(lOp, rOp,
@@ -59,6 +64,7 @@ class Sub extends BinaryOp {
     }
 }
 
+/** Multiplication */
 class Mul extends BinaryOp {
     public Mul(Expression lOp, Expression rOp) {
         super(lOp, rOp,
@@ -68,6 +74,7 @@ class Mul extends BinaryOp {
     }
 }
 
+/** Division */
 class Div extends BinaryOp {
     public Div(Expression lOp, Expression rOp) {
         super(lOp, rOp,
@@ -79,6 +86,7 @@ class Div extends BinaryOp {
     }
 }
 
+/** Exponentiation */
 class Pow extends BinaryOp {
     public Pow(Expression lOp, Expression rOp) {
         super(lOp, rOp,

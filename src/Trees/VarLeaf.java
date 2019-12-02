@@ -1,5 +1,6 @@
 package Trees;
 
+/** An instance represents a variable in an expression tree */
 public class VarLeaf extends Expression {
 
     Variable v; // value of this leaf

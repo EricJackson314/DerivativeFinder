@@ -1,8 +1,10 @@
 package Trees;
 
+/** An instance represents a double in an expression tree */
 public class DblLeaf extends Expression {
-    double val;
+    double val; // value of this leaf
 
+    /** Constructor: instance with value val */
     public DblLeaf(double val) {
         this.val= val;
     }

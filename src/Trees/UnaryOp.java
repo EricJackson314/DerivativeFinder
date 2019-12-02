@@ -1,13 +1,16 @@
 package Trees;
 
+/** Represents a unary operation */
 public class UnaryOp extends Expression {
-    Expression operand;
+    Expression operand; // operand
 
-    String op;
+    String op; // operator
 
-    UnaryEvaluation e;
-    UnaryDerivative d;
+    UnaryEvaluation e; // Evaluation
+    UnaryDerivative d; // Derivative
 
+    /** Constructor: <br>
+     * Creates a Unary Expression with operand Op, operator o, Evaluation ev, and derivative dr */
     public UnaryOp(Expression Op, String o, UnaryEvaluation ev, UnaryDerivative dr) {
         operand= Op;
 
@@ -37,6 +40,7 @@ public class UnaryOp extends Expression {
 
 }
 
+/** Absolute Value */
 class Abs extends UnaryOp {
     public Abs(Expression op) {
         super(op,
@@ -46,6 +50,7 @@ class Abs extends UnaryOp {
     }
 }
 
+/** Negative */
 class Neg extends UnaryOp {
     public Neg(Expression op) {
         super(op,
@@ -55,6 +60,7 @@ class Neg extends UnaryOp {
     }
 }
 
+/** Sine */
 class Sin extends UnaryOp {
     public Sin(Expression op) {
         super(op,
@@ -64,6 +70,7 @@ class Sin extends UnaryOp {
     }
 }
 
+/** Cosine */
 class Cos extends UnaryOp {
     public Cos(Expression op) {
         super(op,
@@ -73,6 +80,7 @@ class Cos extends UnaryOp {
     }
 }
 
+/** Tangent */
 class Tan extends UnaryOp {
     public Tan(Expression op) {
         super(op,
@@ -82,6 +90,7 @@ class Tan extends UnaryOp {
     }
 }
 
+/** Cosecant */
 class Csc extends UnaryOp {
     public Csc(Expression op) {
         super(op,
@@ -91,6 +100,7 @@ class Csc extends UnaryOp {
     }
 }
 
+/** Secant */
 class Sec extends UnaryOp {
     public Sec(Expression op) {
         super(op,
@@ -100,6 +110,7 @@ class Sec extends UnaryOp {
     }
 }
 
+/** Cotangent */
 class Cot extends UnaryOp {
     public Cot(Expression op) {
         super(op,
@@ -109,6 +120,7 @@ class Cot extends UnaryOp {
     }
 }
 
+/** Sine Inverse */
 class ArcSin extends UnaryOp {
     public ArcSin(Expression op) {
         super(op,
@@ -119,6 +131,7 @@ class ArcSin extends UnaryOp {
     }
 }
 
+/** Cosine Inverse */
 class ArcCos extends UnaryOp {
     public ArcCos(Expression op) {
         super(op,
@@ -129,6 +142,7 @@ class ArcCos extends UnaryOp {
     }
 }
 
+/** Tangent Inverse */
 class ArcTan extends UnaryOp {
     public ArcTan(Expression op) {
         super(op,
@@ -138,6 +152,7 @@ class ArcTan extends UnaryOp {
     }
 }
 
+/** Cosecant Inverse */
 class ArcCsc extends UnaryOp {
     public ArcCsc(Expression op) {
         super(op,
@@ -148,6 +163,7 @@ class ArcCsc extends UnaryOp {
     }
 }
 
+/** Secant Inverse */
 class ArcSec extends UnaryOp {
     public ArcSec(Expression op) {
         super(op,
@@ -158,6 +174,7 @@ class ArcSec extends UnaryOp {
     }
 }
 
+/** Cotangent Inverse */
 class ArcCot extends UnaryOp {
     public ArcCot(Expression op) {
         super(op,
@@ -168,6 +185,7 @@ class ArcCot extends UnaryOp {
     }
 }
 
+/** Natural Logarithm */
 class Log extends UnaryOp {
     public Log(Expression op) {
         super(op,
@@ -177,6 +195,7 @@ class Log extends UnaryOp {
     }
 }
 
+/** Exponential */
 class Exp extends UnaryOp {
     public Exp(Expression op) {
         super(op,
